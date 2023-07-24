@@ -1,0 +1,8 @@
+itemGroup.EnderMod=Ender Mod
+
+tile.IchorCollector.name=Ichor Collector
+
+item.IchorShard.name=Ichor Shard
+
+container.ichor_collector=Ichor Collector
+container.timeToCreateIchorShard=Time to the next shard
