@@ -9,7 +9,7 @@ public class IchorShard extends Item {
     public IchorShard() {
         setUnlocalizedName("IchorShard");
         setTextureName(MyMod.MOD_ID + ":" + getUnlocalizedName().substring(5));
-        setMaxStackSize(64);
+        setMaxStackSize(63);
         setCreativeTab(MyMod.tab);
     }
 }
