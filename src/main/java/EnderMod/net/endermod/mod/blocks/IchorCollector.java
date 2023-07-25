@@ -80,22 +80,15 @@ public class IchorCollector extends BlockContainer {
     }
 
     @Override
-    public void updateTick(World worldIn, int x, int y, int z, Random random) {
-        super.updateTick(worldIn, x, y, z, random);
-        int deltaTick = tickRate(worldIn);
-    }
-
-    @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer activator, int side, float hitX,
         float hitY, float hitZ) {
         if (!world.isRemote) {
-            // TODO:add gui
             activator.openGui(MyMod.instance, 0, world, x, y, z);
         }
         return true;
 
     }
-
+    @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack item) {
         TileEntity tile = world.getTileEntity(x, y, z);
         if (tile instanceof TileEntityIchorCollector) {
