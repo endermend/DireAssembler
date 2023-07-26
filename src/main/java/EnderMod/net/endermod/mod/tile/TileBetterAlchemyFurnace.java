@@ -243,6 +243,7 @@ public abstract class TileBetterAlchemyFurnace extends TileThaumcraft implements
 	public void updateEntity() {
 		boolean flag = (this.furnaceBurnTime > 0);
 		boolean flag1 = false;
+		boolean flag2 = vis > 0;
 		this.count++;
 		if (this.furnaceBurnTime > 0)
 			this.furnaceBurnTime--;
@@ -261,7 +262,7 @@ public abstract class TileBetterAlchemyFurnace extends TileThaumcraft implements
 						if (alembic.aspect != null && alembic.amount < alembic.maxAmount
 								&& this.aspects.getAmount(alembic.aspect) > 0) {
 							int count = this.worldObj.rand
-									.nextInt(Math.min(alembic.maxAmount - alembic.amount, maxOutput)-1) + 1;
+									.nextInt(Math.min(alembic.maxAmount - alembic.amount, maxOutput)) + 1;
 							count = takeFromContainer(alembic.aspect, count);
 							alembic.addToContainer(alembic.aspect, count);
 							exlude.merge(alembic.aspect, count);
@@ -281,7 +282,7 @@ public abstract class TileBetterAlchemyFurnace extends TileThaumcraft implements
 						TileAlembic alembic = (TileAlembic) tile;
 						if (alembic.aspect == null || alembic.amount == 0) {
 
-							int count = this.worldObj.rand.nextInt(Math.min(31, maxOutput)-1) + 1;
+							int count = this.worldObj.rand.nextInt(Math.min(32, maxOutput)) + 1;
 							Aspect as = null;
 							if (alembic.aspectFilter == null) {
 								AspectStack ass = takeRandomAspect(exlude, count);
@@ -333,13 +334,14 @@ public abstract class TileBetterAlchemyFurnace extends TileThaumcraft implements
 			} else {
 				this.furnaceCookTime = 0;
 			}
-			if (flag != ((this.furnaceBurnTime > 0))) {
+			if (flag != (this.furnaceBurnTime > 0) || flag2 != vis>0) {
 				flag1 = true;
 				this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
 			}
 		}
-		if (flag1)
+		if (flag1) {
 			markDirty();
+		}
 	}
 
 	public boolean isBurning() {
@@ -362,7 +364,6 @@ public abstract class TileBetterAlchemyFurnace extends TileThaumcraft implements
 		int vs = al.visSize();
 		if (vs > this.maxVis - this.vis)
 			return false;
-		getBellows();
 		this.smeltTime = (int) ((vs * 10) * (1.0F - smelt_speed_modifier * this.bellows));
 		return true;
 	}
