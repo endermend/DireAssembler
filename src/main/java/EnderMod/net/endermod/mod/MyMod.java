@@ -10,7 +10,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = MOD_ID, dependencies = "required-after:Thaumcraft;required-after:ThaumicTinkerer")
+@Mod(modid = MOD_ID, dependencies = "required-after:Thaumcraft;required-after:ThaumicTinkerer", version = "0.0.1")
 public class MyMod {
 
     public static final String MOD_ID = "endermod";

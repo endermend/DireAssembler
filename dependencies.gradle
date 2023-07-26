@@ -35,5 +35,5 @@
  */
 dependencies {
 	compile files('libs/Thaumcraft.jar')
-	compile files('libs/ThaumicTinkerer')
+	compile files('libs/ThaumicTinkerer.jar')
 }

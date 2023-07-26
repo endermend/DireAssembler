@@ -23,7 +23,7 @@ import thaumcraft.common.lib.crafting.ThaumcraftCraftingManager;
 import thaumcraft.common.tiles.TileAlembic;
 import thaumcraft.common.tiles.TileBellows;
 
-public class TileBetterAlchemyFurnace extends TileThaumcraft implements ISidedInventory {
+public abstract class TileBetterAlchemyFurnace extends TileThaumcraft implements ISidedInventory {
 
 	private static final int[] slots_bottom = { 1 };
 	private static final int[] slots_top = new int[0];
@@ -35,7 +35,8 @@ public class TileBetterAlchemyFurnace extends TileThaumcraft implements ISidedIn
 	public int smeltTime = 100;
 	int bellows = -1;
 	boolean speedBoost = false;
-
+	private float smelt_speed_modifier = 0.2F;
+	private int maxOutput = 32;
 	private ItemStack[] furnaceItemStacks = new ItemStack[2];
 	public int furnaceBurnTime;
 	public int currentItemBurnTime;
@@ -43,7 +44,13 @@ public class TileBetterAlchemyFurnace extends TileThaumcraft implements ISidedIn
 	private String customName;
 
 	private int count = 0;
-
+	
+	public TileBetterAlchemyFurnace(int maxVis, int maxOutput, float modifier) {
+		this.maxVis = maxVis;
+		this.maxOutput = maxOutput;
+		this.smelt_speed_modifier = modifier;
+	}
+	
 	@Override
 	public int getSizeInventory() {
 		return this.furnaceItemStacks.length;
@@ -102,7 +109,6 @@ public class TileBetterAlchemyFurnace extends TileThaumcraft implements ISidedIn
 
 	@Override
 	public int getInventoryStackLimit() {
-		// TODO Auto-generated method stub
 		return 64;
 	}
 
@@ -138,7 +144,6 @@ public class TileBetterAlchemyFurnace extends TileThaumcraft implements ISidedIn
 
 	@Override
 	public boolean canInsertItem(int p_102007_1_, ItemStack p_102007_2_, int p_102007_3_) {
-		// TODO Auto-generated method stub
 		return (p_102007_3_ == 1) ? false : isItemValidForSlot(p_102007_1_, p_102007_2_);
 	}
 
@@ -255,13 +260,17 @@ public class TileBetterAlchemyFurnace extends TileThaumcraft implements ISidedIn
 						TileAlembic alembic = (TileAlembic) tile;
 						if (alembic.aspect != null && alembic.amount < alembic.maxAmount
 								&& this.aspects.getAmount(alembic.aspect) > 0) {
-							takeFromContainer(alembic.aspect, 1);
-							alembic.addToContainer(alembic.aspect, 1);
-							exlude.merge(alembic.aspect, 1);
+							int count = this.worldObj.rand
+									.nextInt(Math.min(alembic.maxAmount - alembic.amount, maxOutput)-1) + 1;
+							count = takeFromContainer(alembic.aspect, count);
+							alembic.addToContainer(alembic.aspect, count);
+							exlude.merge(alembic.aspect, count);
 							this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
 							this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord + deep, this.zCoord);
 						}
 						tile = null;
+					} else {
+						break;
 					}
 				}
 				deep = 0;
@@ -271,19 +280,30 @@ public class TileBetterAlchemyFurnace extends TileThaumcraft implements ISidedIn
 					if (tile instanceof TileAlembic) {
 						TileAlembic alembic = (TileAlembic) tile;
 						if (alembic.aspect == null || alembic.amount == 0) {
+
+							int count = this.worldObj.rand.nextInt(Math.min(31, maxOutput)-1) + 1;
 							Aspect as = null;
 							if (alembic.aspectFilter == null) {
-								as = takeRandomAspect(exlude);
-							} else if (takeFromContainer(alembic.aspectFilter, 1)) {
-								as = alembic.aspectFilter;
+								AspectStack ass = takeRandomAspect(exlude, count);
+								if (ass != null) {
+									as = ass.getAspect();
+									count = ass.getCount();
+								}
+							} else {
+								count = takeFromContainer(alembic.aspectFilter, count);
+								if (count > 0) {
+									as = alembic.aspectFilter;
+								}
 							}
 							if (as != null) {
-								alembic.addToContainer(as, 1);
+								alembic.addToContainer(as, count);
 								this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
 								this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord + deep, this.zCoord);
 								break;
 							}
 						}
+					} else {
+						break;
 					}
 				}
 			}
@@ -329,8 +349,10 @@ public class TileBetterAlchemyFurnace extends TileThaumcraft implements ISidedIn
 	public void setGuiDisplayName(String GUIName) {
 		this.customName = GUIName;
 	}
-
-	private boolean canSmelt() {
+	public boolean isEmpty() {
+		return vis<=0;
+	}
+	public boolean canSmelt() {
 		if (this.furnaceItemStacks[0] == null)
 			return false;
 		AspectList al = ThaumcraftCraftingManager.getObjectTags(this.furnaceItemStacks[0]);
@@ -340,7 +362,8 @@ public class TileBetterAlchemyFurnace extends TileThaumcraft implements ISidedIn
 		int vs = al.visSize();
 		if (vs > this.maxVis - this.vis)
 			return false;
-		this.smeltTime = (int) ((vs * 10) * (1.0F - 0.125F * this.bellows));
+		getBellows();
+		this.smeltTime = (int) ((vs * 10) * (1.0F - smelt_speed_modifier * this.bellows));
 		return true;
 	}
 
@@ -366,7 +389,7 @@ public class TileBetterAlchemyFurnace extends TileThaumcraft implements ISidedIn
 		return (TileEntityFurnace.getItemBurnTime(par0ItemStack) > 0);
 	}
 
-	public Aspect takeRandomAspect(AspectList exlude) {
+	public AspectStack takeRandomAspect(AspectList exlude, int count) {
 		if (this.aspects.size() > 0) {
 			AspectList temp = this.aspects.copy();
 			if (exlude.size() > 0)
@@ -374,21 +397,45 @@ public class TileBetterAlchemyFurnace extends TileThaumcraft implements ISidedIn
 					temp.remove(a);
 			if (temp.size() > 0) {
 				Aspect tag = temp.getAspects()[this.worldObj.rand.nextInt((temp.getAspects()).length)];
-				this.aspects.remove(tag, 1);
-				this.vis--;
-				return tag;
+				if (count > this.aspects.getAmount(tag)) {
+					count = this.aspects.getAmount(tag);
+				}
+				this.aspects.remove(tag, count);
+				this.vis -= count;
+				return new AspectStack(tag, count);
 			}
 		}
 		return null;
 	}
 
-	public boolean takeFromContainer(Aspect tag, int amount) {
-		if (this.aspects != null && this.aspects.getAmount(tag) >= amount) {
-			this.aspects.remove(tag, amount);
-			this.vis -= amount;
-			return true;
+	public int takeFromContainer(Aspect tag, int amount) {
+		if (this.aspects == null) {
+			return 0;
 		}
-		return false;
+		if (this.aspects.getAmount(tag) < amount) {
+			amount = aspects.getAmount(tag);
+		}
+		this.aspects.remove(tag, amount);
+		this.vis -= amount;
+		return amount;
+
 	}
 	
+	private class AspectStack {
+		private Aspect aspect;
+		private int count;
+
+		public AspectStack(Aspect aspect, int count) {
+			this.aspect = aspect;
+			this.count = count;
+		}
+
+		public Aspect getAspect() {
+			return this.aspect;
+		}
+
+		public int getCount() {
+			return this.count;
+		}
+	}
 }

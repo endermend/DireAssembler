@@ -1,6 +1,9 @@
 itemGroup.EnderMod=Ender Mod
 
 tile.IchorCollector.name=Ichor Collector
+tile.ImprovedAlchemyFurnace.name=Improved Alchemy Furnace
+tile.AdvancedAlchemyFurnace.name=Advanced Alchemy Furnace
+tile.AdminiumAlchemyFurnace.name=Administator's Alchemy Furnace
 
 item.IchorShard.name=Ichor Shard
 

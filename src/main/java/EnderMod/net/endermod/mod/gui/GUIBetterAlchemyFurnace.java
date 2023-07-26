@@ -11,12 +11,13 @@ import thaumcraft.common.tiles.TileAlchemyFurnace;
 import org.lwjgl.opengl.GL11;
 
 public class GUIBetterAlchemyFurnace extends GuiContainer {
-	public static final ResourceLocation texture = new ResourceLocation(MyMod.MOD_ID,
+	private ResourceLocation texture = new ResourceLocation(MyMod.MOD_ID,
 			"textures/gui/better_alchemy_furnace_gui.png");
 	private TileBetterAlchemyFurnace furnaceInventory;
 
-	public GUIBetterAlchemyFurnace(InventoryPlayer player, TileBetterAlchemyFurnace tileEntityFurnace) {
+	public GUIBetterAlchemyFurnace(InventoryPlayer player, TileBetterAlchemyFurnace tileEntityFurnace, String texture) {
 		super(new ContainerBetterAlchemyFurnace(player, tileEntityFurnace));
+		this.texture = new ResourceLocation(MyMod.MOD_ID, texture);
 		this.furnaceInventory = tileEntityFurnace;
 	}
 
@@ -25,7 +26,6 @@ public class GUIBetterAlchemyFurnace extends GuiContainer {
 
 	protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		UtilsFX.bindTexture("textures/gui/better_alchemy_furnace_gui.png");
 		this.mc.getTextureManager().bindTexture(texture);
 		int k = (this.width - this.xSize) / 2;
 		int l = (this.height - this.ySize) / 2;
