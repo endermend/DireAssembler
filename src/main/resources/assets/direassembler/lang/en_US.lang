@@ -1,0 +1,15 @@
+itemGroup.DireAssembler=Extreme Assembler
+
+block.dire_assembler.name=Extreme Assembler
+block.dire_inscriber.name=Extreme Inscriber
+
+direassembler.item.dire_core.name=Dire Core
+
+direassembler.gui.dire.inscriber.title=Inscriber
+direassembler.gui.dire.assembler.title=Extreme Assembler
+
+direassembler.tooltip.button.inscriber.invalid=Invalid recipe
+direassembler.tooltip.button.inscriber.full=Too many recipes
+direassembler.tooltip.button.inscriber.delete=Delete recipe
+direassembler.tooltip.button.inscriber.save=Save recipe
+direassembler.tooltip.button.inscriber.missing=Missing core

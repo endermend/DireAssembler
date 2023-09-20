@@ -1,0 +1,15 @@
+﻿itemGroup.ChaosStuff=Экстремальный Сборщик
+
+block.dire_assembler.name=Экстремальный Сборщик
+block.dire_inscriber.name=Экстремальный Шаблонщик
+
+direassembler.item.dire_core.name=Ужасное ядро
+
+direassembler.gui.dire.inscriber.title=Шаблонщик
+direassembler.gui.dire.assembler.title=Сборщик
+
+direassembler.tooltip.button.inscriber.invalid=Неверный рецепт
+direassembler.tooltip.button.inscriber.full=Шаблон заполнен
+direassembler.tooltip.button.inscriber.delete=Удалить рецепт
+direassembler.tooltip.button.inscriber.save=Сохранить рецепт
+direassembler.tooltip.button.inscriber.missing=Отстутствует ядро

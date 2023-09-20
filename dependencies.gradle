@@ -34,6 +34,9 @@
  * For more details, see https://docs.gradle.org/8.0.1/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-	compile files('libs/Thaumcraft.jar')
-	compile files('libs/ThaumicTinkerer.jar')
+	//compile files('libs/brandonscore-1.0.0.12.jar')
+	compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24'
+	compile group: 'com.googlecode.guava-osgi', name: 'guava-osgi', version: '11.0.1'
+	compile files('libs/AppliedEnergistics2.jar')
+	compile files('libs/Avaritia-1.13.jar')
 }
